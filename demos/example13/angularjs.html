@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+  <div style="border: solid red 1px" >
+      <div>Age = {{age}} </div>
+      <div>Remaining Age = {{remaining_age}} </div>
+      <div>
+        <input type="number" ng-model="age" ng-change="age_change()" />
+      </div>
+  </div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.age = 20
+    $scope.remaining_age = 80
+    $scope.age_change = function() {
+      $scope.remaining_age = 100 - $scope.age
+    }
+  });
+</script>
+</body>
+</html>

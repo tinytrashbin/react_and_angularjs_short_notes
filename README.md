@@ -388,6 +388,8 @@ function MainFunc(props) {
 
 React Syntax: `{list.map((x) => <div>...{x}...</div>)}`
 
+React Syntax (Advance): `{list.map((x) => <div key={some_unique_id} >...{x}...</div>)}`
+
 AngularJS Syntax: `<div ng-repeat="x in list" >...{{x}} .</div>`
 
 
@@ -400,7 +402,7 @@ function MainFunc(props) {
     <div>
       <ul>
         {fruits.map((fruit) => (
-          <div>
+          <div key={fruit} >
             I like <b>{fruit}</b>
           </div>
         ))}
@@ -431,6 +433,11 @@ function MainFunc(props) {
 </body>
 </html>
 ```
+
+Note:
+
+1). It's optional to pass a `key` attribute when repeating a div. If we pass, it improves the speed/performance of application. we can pass a unique id or any other unique value.
+
 
 [Example7 Demo](demos/example7)
 
@@ -684,7 +691,7 @@ function MainFunc(props) {
   return (
     <div>
       {state.get("books").map(book => (
-        <div style={{border: "solid #ccc 1px", margin: "10px"}} >
+        <div key={book.get("id")} style={{border: "solid #ccc 1px", margin: "10px"}} >
           Book-{book.get("id")}
           <div>
             {book.get("is_open") &&
@@ -761,7 +768,7 @@ function MainFunc(props) {
 
 -----------------------------------
 
-### 11). [Incomplete] API call and useExecOnce hook
+### 11). API call and useExecOnce hook
 
 Note: `MainFunc` function is called everytime state is changed. If a code needs to be executed only once (example: API call), it should be kept inside `useExecOnce`
 
@@ -815,10 +822,228 @@ function MainFunc(props) {
 **File: angularjs.html**
 
 ```HTML
+<!DOCTYPE html>
+<html>
 
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script type="text/javascript" crossorigin="anonymous"  src="angular_starter_pack.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div>
+  <h2>Name = {{name}}</h2>
+  <div>This API takes 5 seconds to respond. After 5 seconds name will be changed.</div>
+  <div style="font-size: 20px; " >Counter Value = {{counter}}</div>
+  <div>
+    <button ng-click="increment()" >Click to Increase Counter</button>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope, $http) {
+    $scope.name = "Default-Name"
+    $scope.counter = 1
+
+    $scope.increment = function() {
+      $scope.counter += 1
+    }
+
+    api($http, "/sleep_for_5_seconds_and_return_name", {}, function(backend_output) {
+      $scope.name = backend_output.name
+    })
+  });
+</script>
+</body>
+</html>
 ```
 
 [Example11 Demo](demos/example11)
+
+
+-----------------------------------
+
+
+### 12). Subcomponents
+
+Consider this example of building a house using smaller components:
+
+**File: common.jsx**
+
+```JSX
+
+function Window(props) {
+  const style_dict = {
+    display: "inline-block",
+    width: "100px",
+    height: props.height+ "px",
+    border: "solid #ccc 1px",
+    margin: "5px"
+  };
+  return (<div style={style_dict} >Window of {props.height}px height.</div>);
+}
+
+function Door(props) {
+  const style_dict = {
+    display: "inline-block",
+    width: "100px",
+    height: "200px",
+    border: "solid red 1px",
+    margin: "5px"
+  };
+  return (<div style={style_dict} >Door.</div>);
+}
+
+function Room1(props) {
+  return (
+    <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
+      <h3>I am Room1</h3>
+      <div >
+        <Window height={100} />
+        <Door/>
+        <Window height={100} />
+      </div>
+    </div>
+  )
+}
+
+function Room2(props) {
+  return (
+    <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
+      <h3>I am Room2</h3>
+      <div >
+        <Window height={80} />
+        <Window height={120} />
+        <Door/>
+        <Window height={120} />
+        <Window height={80} />
+      </div>
+    </div>
+  )
+}
+
+function Foodbox(props) {
+  return (
+    <div style={{margin: "4px", backgroundColor: "#ddd"}} >
+      I am {props.name}
+    </div>
+  )
+}
+
+function Kitchen() {
+  const food_list = ["Apple Juice", "Paneer", "Paratha"]
+  return (
+    <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
+      <h3>I am Kitchen</h3>
+      <div>
+        Food items:
+      </div>
+      <div>
+        {food_list.map(food_name => <Foodbox name={food_name} />)}
+      </div>
+    </div>
+  )
+}
+
+function MainFunc(props) {
+  return (
+    <div style={{border: "solid black 1px"}} >
+      <Room1 />
+      <Kitchen />
+      <Room2 />
+    </div>
+  )
+}
+
+```
+
+Note:
+
+1). Parameters/arguments/attributes passed to a component can be accessed from `props` dictionary.
+
+In this example, see how `height` is passed to `<Window height={80} />`
+and how `name` is passed to `<Foodbox name={food_name} />`.
+
+Which is then accessed using `props.height` or `props.name` in those component implementation.
+
+
+[Example12 Demo](demos/example12)
+
+
+-----------------------------------
+
+
+### 13). [Advance] Custom onChange
+
+Calling a function when value of a state variable is changed:
+
+Syntax: 
+
+```JSX
+useEffectOnChange(() => {
+  // Action to be taken when variables are changed.
+}, [changed_variables])
+```
+
+In this example `state.get("age")` is the changed variable.
+
+**File: common.jsx**
+
+```JSX
+function MainFunc(props) {
+  const state = useDictState({
+    age: 20,
+    remaining_age: 80
+  })
+
+  useEffectOnChange(() => {
+    state.set("remaining_age", 100 - state.get("age"))
+  }, [state.get("age")])
+
+  return (
+    <div style={{border: "solid red 1px"}} >
+        <div>Age = {state.get('age')} </div>
+        <div>Remaining Age = {state.get('remaining_age')} </div>
+        <div>
+          <input type="number" value={state.get('age')} onChange={state.setter('age')} />
+        </div>
+    </div>
+  );
+}
+```
+
+**File: angularjs.html**
+
+```HTML
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+  <div style="border: solid red 1px" >
+      <div>Age = {{age}} </div>
+      <div>Remaining Age = {{remaining_age}} </div>
+      <div>
+        <input type="number" ng-model="age" ng-change="age_change()" />
+      </div>
+  </div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.age = 20
+    $scope.remaining_age = 80
+    $scope.age_change = function() {
+      $scope.remaining_age = 100 - $scope.age
+    }
+  });
+</script>
+</body>
+</html>
+```
+
+In this example, when `age` is changed, we want to update the `remaining_age` variable automatically.
+
+[Example13 Demo](demos/example13)
 
 
 
@@ -1010,19 +1235,20 @@ function MainFunc(props) {
 }
 ```
 
+#### 4). Stringify variables to show inside HTML.
+
+By default an integer or string type of variable can be displayed in HTML using `{variable}`.
+
+To display other type of variables (example - boolean, or list/dict) inside HTML, use `{Stringify(variable)}`
+
+<div>List = {Stringify(state.get("list"))}</div>
+
+
 ### Advance Stuff
 
-1). Using subcomponent.. making Building.
-
-2). Passing arguments in subcomponent using props.
-
-4). Custom things onChange apart from setter. "Compose" method to compose multiple functions.
-
-5). Router.
-
-6). API call and React.useEffect.
+1). Router.
 
 ### Try It
 
-[Try JSX code here](try_it/index.html).
+[Try JSX code here](https://tinytrashbin.github.io/react_and_angularjs_short_notes/try_it/index.html).
 
