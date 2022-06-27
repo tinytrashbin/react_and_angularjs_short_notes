@@ -140,8 +140,8 @@ z1 = "Def" // OK. Allowed.
 
 function Func() {
   {  // Scope-1 Started.
-    var p1 = 33
-    let q1 = 34
+    var p1 = 30
+    let q1 = 60
     { // Scope-2 Started.
       console.log(p1) // Ok. Allowed.
       console.log(q1) // Ok. Allowed.
@@ -157,7 +157,7 @@ function Func() {
     p1 += 1
     q1 += 1
   }  // Scope-1 Ended.
-  console.log(p1) // Ok. Allowed. Prints 34.
+  console.log(p1) // Ok. Allowed. Prints 32.
   console.log(q1) // Not Allowed. Error "q1 undefined".
 }
 ```
