@@ -11,14 +11,14 @@ function MainFunc(props) {
   // example when button is clicked.
   console.log("Inside MainFunc " + state.get("counter"))
 
-  React.useEffect(() => {
+  useExecOnce(() => {
     // this console.log will be there exactly once.
-    console.log("Inside React.useEffect")
+    console.log("Inside useExecOnce")
     // This API takes 5 seconds to respond.
     api("/sleep_for_5_seconds_and_return_name", {}, function(d) {
       state.set('name', d.name)
     })
-  }, [])
+  })
 
   return (
     <div>
