@@ -11,8 +11,10 @@
 
 5. Two different project should run on two different port number.
 
-6. See [Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example2/)
+------
+
+[React Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example2/index.html)
 
 
-### AngularJS:
-[angularjs.html](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example2/angularjs.html)
+[Angularjs Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example2/angularjs.html)
+

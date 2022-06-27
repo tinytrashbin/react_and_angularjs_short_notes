@@ -45,9 +45,9 @@ function MainFunc(props) {
 <body ng-app="myApp" ng-controller="myCtrl" >
 <h1>Hello World !</h1>
 <script>
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope) {
-});
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+  });
 </script>
 </body>
 </html>
@@ -78,16 +78,13 @@ Note: No change in `index.html`
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <body ng-app="myApp" ng-controller="myCtrl" >
-
 <h1>Hello {{name}} ! There are total of {{3 + 4}} people.</h1>
-
 <script>
-var app = angular.module('myApp', []);
-app.controller('myCtrl', function($scope) {
-    $scope.name = "Truck";
-});
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+      $scope.name = "Truck";
+  });
 </script>
-
 </body>
 </html>
 ```
