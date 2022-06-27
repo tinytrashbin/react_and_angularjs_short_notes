@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+  <div>
+    <div ng-repeat="fruit in fruits" >
+      I like <b>{{fruit}}</b>
+    </div>
+  </div>
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.fruits = ["Apple", "Banana", "Orange"]
+  });
+</script>
+</body>
+</html>

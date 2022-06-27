@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div>
+  <div style="border: solid blue 1px" >
+    Box1:
+    <ul ng-if="show_fruits">
+      <li>Apples</li>
+      <li>Bananas</li>
+      <li>Cherries</li>
+    </ul>
+  </div>
+  <div style="border: solid blue 1px" >
+    Box2:
+    <ul ng-if="animals.length > 0" >
+      <li>Cat</li>
+      <li>Tiger</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.animals = ["Cat", "Tiger"]
+    $scope.show_fruits = false
+  });
+</script>
+</body>
+</html>

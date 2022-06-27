@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+
+div.hsplit:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+div.hsplit > div {
+  float: left;
+}
+
+  </style>
+
+  <!-- Fixed -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-router-dom@6.3.0/umd/react-router-dom.production.min.js" ></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script crossorigin type="text/babel" src="https://raw.githubusercontent.com/mohitmv/react_starter_pack/master/react_starter_pack.jsx" ></script>
+
+  <script type="text/javascript">
+    function Run() {
+      var g = document.createElement('script');
+      var jsx_code = document.getElementById("textarea").value
+      // jsx_code = "function MainFunc(props) { return <h1>Hello World!</h1>;}"
+      jsx_code += "\nReactDOM.render(<MainFunc />, document.getElementById('mydiv'))"
+      g.setAttribute("type", "text/babel")
+      g.text = jsx_code
+      document.body.appendChild(g);
+      Babel.transformScriptTags()
+    }
+  </script>
+
+</head>
+<body>
+  <div style="margin: 10px 0px;" >
+    <button onclick="Run()" >Run</button>
+  </div>
+  <div class="hsplit" >
+    <div style="width: 50%; display: inline-block; box-sizing: border-box; " >
+      JSX Code Here:
+      <div>
+      <textarea id="textarea" style="width: 80%; padding: 10px;" rows="30" >
+function MainFunc(props) {
+  return <h1>Hello World!</h1>;
+}
+</textarea>
+      </div>
+      Note:<br>
+      1. Name of main function should be "MainFunc"
+    </div>
+    <div style="width: 50%; box-sizing: border-box; display: inline-block"  >
+      <div style="border: solid #ccc 1px; " id="mydiv" >
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>

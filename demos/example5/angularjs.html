@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+  <div>
+    <div><button ng-click="func1()" >Click1</button> </div>
+    <div><button ng-click="func2(4, 5)" >Click2</button> </div>
+  </div>
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.func1 = function() {
+      alert("Abc")
+    }
+
+    $scope.func2 = function(x, y) {
+      alert("Abc " + x + "," + y)
+    }
+  });
+</script>
+</body>
+</html>
