@@ -1249,6 +1249,13 @@ To display other type of variables (example - boolean, or list/dict) inside HTML
 
 1). Router.
 
+### Note
+
+1. In this tutorial, we are using [React Starter Pack](https://github.com/mohitmv/react_starter_pack/) library.
+
+2. In this tutorial, we are using inline babel transformer for simplicity. In real production apps, it's done offline, which require local setup/installation. `npm` setup is skipped from this tutorial.
+
+
 ### Try It
 
 [Try JSX code here](https://tinytrashbin.github.io/react_and_angularjs_short_notes/try_it/index.html).
