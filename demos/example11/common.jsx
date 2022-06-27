@@ -15,8 +15,8 @@ function MainFunc(props) {
     // this console.log will be there exactly once.
     console.log("Inside useExecOnce")
     // This API takes 5 seconds to respond.
-    api("/sleep_for_5_seconds_and_return_name", {}, function(d) {
-      state.set('name', d.name)
+    api("/sleep_for_5_seconds_and_return_name", {}, function(backend_output) {
+      state.set('name', backend_output.name)
     })
   })
 

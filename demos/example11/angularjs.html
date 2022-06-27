@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script type="text/javascript" crossorigin="anonymous"  src="angular_starter_pack.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div>
+  <h2>Name = {{name}}</h2>
+  <div>This API takes 5 seconds to respond. After 5 seconds name will be changed.</div>
+  <div style="font-size: 20px; " >Counter Value = {{counter}}</div>
+  <div>
+    <button ng-click="increment()" >Click to Increase Counter</button>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope, $http) {
+    $scope.name = "Default-Name"
+    $scope.counter = 1
+
+    $scope.increment = function() {
+      $scope.counter += 1
+    }
+
+    api($http, "/sleep_for_5_seconds_and_return_name", {}, function(backend_output) {
+      $scope.name = backend_output.name
+    })
+  });
+</script>
+</body>
+</html>
+
+
