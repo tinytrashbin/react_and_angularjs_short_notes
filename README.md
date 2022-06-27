@@ -2,7 +2,6 @@
 
 ### Example1:
 
-
 **File: common.jsx**
 
 ```JSX
@@ -37,6 +36,65 @@ function MainFunc(props) {
 </body>
 </html>
 ```
+**File: angularjs.html**
+
+```HTML
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+<h1>Hello World !</h1>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+});
+</script>
+</body>
+</html>
+```
 
 [Example1 Demo](demos/example1)
 
+
+### Example2:
+
+Expression evaluation inside HTML using `{...}`.
+
+**File: common.jsx**
+
+```JSX
+function MainFunc(props) {
+  var name = "Truck"
+  return <h1>Hello {name} ! There are total of {3 + 4} people.</h1>;
+}
+```
+
+Note: No change in `index.html`
+
+**File: angularjs.html**
+
+```HTML
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<h1>Hello {{name}} ! There are total of {{3 + 4}} people.</h1>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope) {
+    $scope.name = "Truck";
+});
+</script>
+
+</body>
+</html>
+```
+
+**React vs AngularJS Difference:**
+
+1. `{name}` vs `{{name}}`
+2. `{3 + 4}` vs `{{3 + 4}}`
+
+[Example2 Demo](demos/example2)
