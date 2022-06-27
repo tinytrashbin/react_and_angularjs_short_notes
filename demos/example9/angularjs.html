@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div style="border: solid #ccc 1px" >
+  <div>My Name = {{name}}</div>
+  <div><input ng-model="name" /></div>
+  <div>My City = {{city}}</div>
+  <div>
+    <select ng-model="city" >
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.name = "Alan"
+    $scope.city = "B"
+  });
+</script>
+</body>
+</html>

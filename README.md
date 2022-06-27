@@ -483,13 +483,42 @@ Example:
 | Get   | `state.name`         | `state.get("name")`  |
 | Get   | `state["tasks"][0]`  | `state.get("tasks").get(0)`  |
 | Get   | `state.tasks[0]`     | `state.get("tasks").get(0)`  |
+| Get   | `state.list3.push(x+y)` | `state.get("list3").push(x + y)`  |
+| Get   | `state.list3.pop()` | `state.get("list3").pop()`  |
 | Set   | `state.name = "Abc"` | `state.set("name", "Abc")`  |
 | Set   | `state.age = 44 + x` | `state.set("age", 44 + x)`  |
 | Set   | `state["age"] = 44 + x` | `state.set("age", 44 + x)`  |
+| Get & Set | `state.age = state.age + 1` | `state.set("age", state.get("age") + 1)`  |
+| Get & Set | `state.age += 1` | `state.set("age", state.get("age") + 1)`  |
 | Get & Set | `state.list[0] = x + y` | `state.get("list").set(0, x + y)`  |
 | Get & Set | `state.tasks[0].name = x`  | `state.get("tasks").get(0).set("name", x)`  |
 | Get & Set | `state.info.city = "Abc"` | `state.get("info").set("city", "Abc")`  |
 | Get & Set | `state.list2[0].number = x + 1` | `state.get("list2").get(0).set("number", x + 1)`  |
+
+Important Differences
+
+|       | Usually              | With useDictState    |
+| ----- | -------------------- | -------------------- |
+| Get   | `state.tasks.length` | `state.get("tasks").length()`  |
+
+
+When and how to use `.set`:
+
+If there is `=` (i.e. it sets the value) and it looks like:
+
+A). `state.complex.expression.key = some.complex.expression`
+
+B). `state.complex.expression["key"] = some.complex.expression`
+
+C). `state.complex.expression[3] = some.complex.expression`
+
+With `.set`, it will become:
+
+A). `state.complex.expression.set("key", some.complex.expression)`
+
+B). `state.complex.expression.set("key", some.complex.expression)`
+
+C). `state.complex.expression.set(3, some.complex.expression)`
 
 
 **File: common.jsx**
@@ -541,10 +570,240 @@ Advance Shortcut : `state.set("counter", x => x+1)`
 </body>
 </html>
 ```
+**React vs AngularJS Difference:**
+
+| React              | AngularJS    |
+| -------------------- | -------------------- |
+| `onClick={increment}` | `ng-click="increment()"` |
+| `<div>Counter Value = {state.get("counter")}</div>` | `<div>Counter Value = {{counter}}</div>` |
+| `state.set("counter", state.get("counter") + 1)` | `$scope.counter += 1` |
+| `const state = useDictState({counter: 1})` | `$scope.counter = 1` |
+
 
 [Example8 Demo](demos/example8)
 
+
+-----------------------------------
+
+### 9). useDictState hook and Input
+
+React Syntax: `<input value={state.get('name')} onChange={state.setter('name')} />`
+
+Angular Syntax: `<input ng-model="name" />`
+
+Note:
+
+1. To bidirectionally connect input's value with a variable, `value` and `onChange` needs to be specified correctly.
+
+2. `.setter` method returns a function, that will automatically update the value of key `name` whenever input's text is changed in browser.
+
+
+**File: common.jsx**
+
+```JSX
+function MainFunc(props) {
+  const state = useDictState({
+    name: "Alan",
+    city: "B"
+  })
+  return (
+    <div style={{border: "solid red 1px"}} >
+        <div>My Name = {state.get('name')} </div>
+        <div>
+          <input value={state.get('name')} onChange={state.setter('name')} />
+        </div>
+        <div>My City = {state.get('city')}</div>
+        <div>
+          <select value={state.get('city')} onChange={state.setter('city')} >
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+          </select>
+        </div>
+    </div>
+  );
+}
+```
+
+**File: angularjs.html**
+
+
+```HTML
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div style="border: solid #ccc 1px" >
+  <div>My Name = {{name}}</div>
+  <div><input ng-model="name" /></div>
+  <div>My City = {{city}}</div>
+  <div>
+    <select ng-model="city" >
+      <option>A</option>
+      <option>B</option>
+      <option>C</option>
+    </select>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.name = "Alan"
+    $scope.city = "B"
+  });
+</script>
+</body>
+</html>
+```
+
+[Example9 Demo](demos/example9)
+
+-----------------------------------
+
+### 10). Complex and Nested useDictState hook
+
+**File: common.jsx**
+
+```JSX
+function MainFunc(props) {
+  const state = useDictState({
+    books: [
+      {is_open: false, id: 1},
+      {is_open: true, id: 2},
+      {is_open: false, id: 3}],
+    name: "Book",
+  })
+  const open = function(book) {
+    book.set("is_open", true)
+  }
+  const close = function(book) {
+    book.set("is_open", false)
+  }
+  return (
+    <div>
+      {state.get("books").map(book => (
+        <div style={{border: "solid #ccc 1px", margin: "10px"}} >
+          Book-{book.get("id")}
+          <div>
+            {book.get("is_open") &&
+              <img src="https://thumbs.dreamstime.com/z/open-book-vector-icon-white-background-53193927.jpg"
+                  style={{width: "40px"}} />}
+            {!book.get("is_open") &&
+              <img src="https://image.shutterstock.com/image-vector/closed-book-bookmark-icon-vector-260nw-1438430336.jpg"
+                  style={{width: "40px"}} />}
+          </div>
+          <div>
+            <button onClick={()=>open(book)} >Open</button>
+            <button onClick={()=>close(book)} >Close</button>
+          </div>
+        </div>
+        ))}
+    </div>
+  );
+}
+```
+
+**File: angularjs.html**
+
+```HTML
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+<div>
+  <div ng-repeat="book in books" style="border: solid #ccc 1px; margin: 10px" >
+    Book-{{book.id}}
+    <div>
+      <img ng-if="book.is_open" src="https://thumbs.dreamstime.com/z/open-book-vector-icon-white-background-53193927.jpg" style="width: 40px" />
+      <img ng-if="!book.is_open" src="https://image.shutterstock.com/image-vector/closed-book-bookmark-icon-vector-260nw-1438430336.jpg" style="width: 40px" />
+    </div>
+    <div>
+      <button ng-click="open(book)" >Open</button>
+      <button ng-click="close(book)" >Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.books = [
+        {is_open: false, id: 1},
+        {is_open: true, id: 2},
+        {is_open: false, id: 3}
+    ]
+    $scope.open = function(book) {
+      book.is_open = true
+    }
+    $scope.close = function(book) {
+      book.is_open = false
+    }
+  });
+</script>
+</body>
+</html>
+```
+
+| React              | AngularJS    |
+| -------------------- | -------------------- |
+| `onClick={()=>open(book)}` | `ng-click="open(book)"` |
+| `<div>Book-{book.get("id")}</div>` | `<div>Book-{{book.id}}</div>` |
+| `book.set("is_open", true)` | `book.is_open = true` |
+| `{book.get("is_open") && <img .../>}` | `<img ng-if="book.is_open" ... />` |
+| `{state.get("books").map(book => (...))}` | `<div ng-repeat="book in books" >...</div>` |
+
+
+
+[Example10 Demo](demos/example10)
+
+
+-----------------------------------
+
+### 11). [Incomplete] API call and useExecOnce hook
+
+Note: `MainFunc` function is called everytime state is changed. If a code needs to be executed only once (example: API call), it should be kept inside `useExecOnce`
+
+Syntax:
+
+```JSX
+useExecOnce(() => {
+  // Any Code.. Example API call.
+})
+```
+
+**File: common.jsx**
+
+```JSX
+function MainFunc(props) {
+  const state = useDictState({
+    name: "Default-Name",
+  })
+  useExecOnce(() => {
+    api("/sleep_for_5_seconds_and_return_name", {}, function(backend_output) {
+      state.set('name', backend_output.name)
+    })
+  })
+  return (
+    <div>
+      <h2>My Name = {state.get("name")}<h2>
+      <div>This API takes 5 seconds to respond. After 5 seconds name will be changed.</div>
+    </div>
+  );
+}
+```
+
+**File: angularjs.html**
+
+```HTML
+```
+
+
+
 <!--
+
+
 -----------------------------------
 
 ### template
@@ -576,6 +835,10 @@ function MainFunc(props) {
 </body>
 </html>
 ```
+
+
+[Example8 Demo](demos/example8)
+
 
 -->
 
@@ -679,6 +942,8 @@ Example:
 
  - Valid: `<div className="product_div" >Abc</div>`
 
+ - Valid: `<div className={"product_div"} >Abc</div>`
+
 
 #### 3). Only One Top Level Element.
 
@@ -724,6 +989,17 @@ function MainFunc(props) {
 }
 ```
 
+### Advance Stuff
+
+1). Using subcomponent.. making Building.
+
+2). Passing arguments in subcomponent using props.
+
+4). Custom things onChange apart from setter. "Compose" method to compose multiple functions.
+
+5). Router.
+
+6). API call and React.useEffect.
 
 ### Try It
 

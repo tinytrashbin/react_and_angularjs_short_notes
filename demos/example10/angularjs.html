@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div>
+  <div ng-repeat="book in books" style="border: solid #ccc 1px; margin: 10px" >
+    Book-{{book.id}}
+    <div>
+      <img ng-if="book.is_open" src="https://thumbs.dreamstime.com/z/open-book-vector-icon-white-background-53193927.jpg" style="width: 40px" />
+      <img ng-if="!book.is_open" src="https://image.shutterstock.com/image-vector/closed-book-bookmark-icon-vector-260nw-1438430336.jpg" style="width: 40px" />
+    </div>
+    <div>
+      <button ng-click="open(book)" >Open</button>
+      <button ng-click="close(book)" >Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.books = [
+        {is_open: false, id: 1},
+        {is_open: true, id: 2},
+        {is_open: false, id: 3}
+    ]
+    $scope.open = function(book) {
+      book.is_open = true
+    }
+    $scope.close = function(book) {
+      book.is_open = false
+    }
+  });
+</script>
+</body>
+</html>
