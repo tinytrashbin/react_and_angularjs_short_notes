@@ -1241,8 +1241,9 @@ By default an integer or string type of variable can be displayed in HTML using 
 
 To display other type of variables (example - boolean, or list/dict) inside HTML, use `{Stringify(variable)}`
 
+```HTML
 <div>List = {Stringify(state.get("list"))}</div>
-
+```
 
 ### Advance Stuff
 
