@@ -436,6 +436,116 @@ function MainFunc(props) {
 
 -----------------------------------
 
+### 8). useDictState Hook
+
+`const state = useDictState({key1: ..., key2: ...})`
+
+All the variables with changing value, should be put inside `useDictState` as a key.
+`useDictState` will ensure when their value is changed, it's reflected correctly in HTML.
+
+1). Incorrect:
+
+```JSX
+function MainFunc(props) {
+  var name = "Abc";
+  var age = 12;
+  var tasks = [{name: "Task1"}, {name: "Task2"}]
+  var tabs_in_header = ["About", "Contacts", "Projects"]
+  ...
+}
+```
+
+2). Correct:
+
+```JSX
+function MainFunc(props) {
+  const state = useDictState({
+    name: "Abc",
+    age: 12,
+    tasks: [{name: "Task1"}, {name: "Task2"}],
+  })
+  const tabs_in_header = ["About", "Contacts", "Projects"]
+  ...
+}
+```
+
+Note: `tabs_in_header` is a fixed value. It's never changed. Hence we can decide to put it outside of `useDictState` as well. Though there is no harm in keeping it inside `useDictState`.
+
+Accessing and updating key-values in useDictState.
+
+1). We need to use `dict.get(key)` to access the key-value in `useDictState` object, and `dict.set(key, value)` to update a value.
+
+Example:
+
+|       | Usually              | With useDictState    |
+| ----- | -------------------- | -------------------- |
+| Get   | `state["name"]`      | `state.get("name")`  |
+| Get   | `state.name`         | `state.get("name")`  |
+| Get   | `state["tasks"][0]`  | `state.get("tasks").get(0)`  |
+| Get   | `state.tasks[0]`     | `state.get("tasks").get(0)`  |
+| Set   | `state.name = "Abc"` | `state.set("name", "Abc")`  |
+| Set   | `state.age = 44 + x` | `state.set("age", 44 + x)`  |
+| Set   | `state["age"] = 44 + x` | `state.set("age", 44 + x)`  |
+| Get & Set | `state.list[0] = x + y` | `state.get("list").set(0, x + y)`  |
+| Get & Set | `state.tasks[0].name = x`  | `state.get("tasks").get(0).set("name", x)`  |
+| Get & Set | `state.info.city = "Abc"` | `state.get("info").set("city", "Abc")`  |
+| Get & Set | `state.list2[0].number = x + 1` | `state.get("list2").get(0).set("number", x + 1)`  |
+
+
+**File: common.jsx**
+
+```JSX
+function MainFunc(props) {
+  const state = useDictState({
+    counter: 1
+  })
+  var increment = function() {
+    state.set("counter", state.get("counter") + 1)
+  }
+  return (
+    <div>
+      <div style={{fontSize: "20px"}} >Counter Value = {state.get("counter")}</div>
+      <div>
+        <button onClick={increment} >Click to Increase Counter</button>
+      </div>
+    </div>
+  );
+}
+```
+
+Advance Shortcut : `state.set("counter", x => x+1)`
+
+
+**File: angularjs.html**
+
+```HTML
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="myCtrl" >
+  <div>
+    <div style="font-size: 20px" >Counter Value = {{counter}}</div>
+    <div>
+      <button ng-click="increment()" >Click to Increase Counter</button>
+    </div>
+  </div>
+<script>
+  var app = angular.module('myApp', []);
+  app.controller('myCtrl', function($scope) {
+    $scope.counter = 1
+    $scope.increment = function() {
+      $scope.counter += 1
+    }
+  });
+</script>
+</body>
+</html>
+```
+
+[Example8 Demo](demos/example8)
+
+<!--
+-----------------------------------
 
 ### template
 
@@ -467,11 +577,13 @@ function MainFunc(props) {
 </html>
 ```
 
+-->
+
 -----------------------------------
 
 
 
-### --). Functions in JSX
+### Functions in JSX
 
 ```JSX
 function Func1(x) {
@@ -500,7 +612,7 @@ var Func6 = () => 33
 
 -----------------------------------
 
-### --). Variables in JSX
+### Variables in JSX
 
 ```JSX
 var x1 = 5.6;
@@ -542,38 +654,78 @@ function Func() {
 
 `p1` can be used anywhere in function `Func`.
 
-
------------------------------------
-
-### --). Map / ng-repeat
-
-
-**File: common.jsx**
-
-```JSX
-function MainFunc(props) {
-  var fruits = ["Apple", "Banana", "Orange"]
-  return <div></div>;
-}
-```
-
-
 -----------------------------------
 
 ### JSX Syntax Requirements:
 
-1. Single tags (example `<input />`, `<br/>`) must end with `/>`.
+#### 1). Unpaired tags (example `<input />`, `<br/>`) must end with `/>`
 
-2. `className` instead of `class`.
+Example:
 
-3. Only One Top Level Element.
+ - Invalid: `<input>`
 
-Alternatively `<>`, `</>` can be used for avoiding unnecessary tags.
+ - Valid: `<input/>`
+
+ - Invalid: `<br>`
+
+ - Valid: `<br/>`
 
 
+#### 2). `className` instead of `class`
+
+Example:
+
+ - Invalid: `<div class="product_div" >Abc</div>`
+
+ - Valid: `<div className="product_div" >Abc</div>`
 
 
+#### 3). Only One Top Level Element.
 
-[Try it here](try_it/). You will have to copy-paste the JSX code.
+Alternatively `<>`, `</>` can be used
+   for avoiding unnecessary tags.
 
+Example:
+
+- A). Invalid:
+
+```JSX
+function MainFunc(props) { // Error.
+  return (
+    <div>Abc</div>
+    <div>Def</div>
+  );
+}
+```
+
+- B). Valid:
+
+```JSX
+function MainFunc(props) {
+  return (
+    <div>
+      <div>Abc</div>
+      <div>Def</div>
+    </div>
+  );
+}
+```
+
+- C). Valid:
+
+```JSX
+function MainFunc(props) {
+  return (
+    <>
+      <div>Abc</div>
+      <div>Def</div>
+    </>
+  );
+}
+```
+
+
+### Try It
+
+[Try JSX code here](try_it/index.html).
 
