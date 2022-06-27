@@ -13,7 +13,7 @@
 
 ------
 
-[React Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example4/index.html)
+[React Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example12/index.html)
 
-[Angularjs Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example4/angularjs.html)
+[Angularjs Live Demo](https://tinytrashbin.github.io/react_and_angularjs_short_notes/demos/example12/angularjs.html)
 
