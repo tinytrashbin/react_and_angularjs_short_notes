@@ -453,13 +453,13 @@ Note:
 
 If non-const variables (i.e. variables whose value can change over time) are used in HTML content, they should be used with state managers, like `useState` hook, `useDictState` hook, redux store etc.
 
-In React, there are so many ways of managing state. Details can be found in [this section](#14-state-management-in-detail). Here we will see a brief summary.
+In React, there are so many ways of managing state. Details can be found in [this section](#14-state-management-in-detail). Here is a brief summary of `React.useState` and `useDictState` hooks.
 
 #### A). `React.useState` (Available with React by default)
 
 - Suitable for Atomic types. Example: integers, boolean and string.
 - Not suitable for complex types like list and dict. We must use Redux Store or React Reducer for them.
-- Suitable for complex types like list/dict **ONLY IF** we never edit them partially, but  replace them with a new value.
+- Suitable for complex types like list/dict **ONLY IF** we never edit them partially, but replace them with a new value.
 
 How to use `React.useState`:
 
@@ -494,7 +494,7 @@ setInfo({name: "B", age: 55})
 // Updating it's value to some other dictionary:
 setInfo(new_info)
 
-// NOT ALLOWED
+// NOT ALLOWED.
 info.name = "B"
 ```
 
@@ -504,7 +504,6 @@ info.name = "B"
 - `.get` or `.set` needs to be used for accessing dict keys / list index.
 
 Syntax: `const state = useDictState({key1: ..., key2: ...})`
-
 
 ```JSX
 function MainFunc(props) {
@@ -572,9 +571,6 @@ B). `state.complex.expression.set("key", some.complex.expression)`
 C). `state.complex.expression.set(3, some.complex.expression)`
 
 -------
-
-#### C). `Redux Store` and `React's Reducer Hook` are explained in this section.
-
 
 **File: common.jsx**
 
@@ -1369,3 +1365,121 @@ F). Global store with react reducer without immer library : We will NOT cover th
 
 G). `useImmer` hook (Custom Implementation) : We will cover this.
 
+------
+
+#### C). Global Store with Redux Toolkit
+
+[This is a  basic example](https://github.com/tinytrashbin/react_app), demonstrating how redux toolkit can be used for state management.
+
+Note: In any react app, all the important code goes in `src` directory.
+
+In this app:
+
+- `src/state_reducers.js` contains state management logic of one file.
+
+- `src/common.jsx` contains components.
+
+- `src/index.jsx` contains stub code, which doesn't change much.
+
+**File: src/common.jsx**
+
+```JSX
+import './main.css';
+import {book_slice} from './state_reducers';
+import { useSelector, useDispatch } from 'react-redux';
+
+function MainFunc(props) {
+  const state = useSelector(store => store.book_slice)
+  const dispatch = useDispatch();
+  return (
+    <div className="top_box" >
+      <div >
+        <div>
+          {state.books.map((book, book_index) => (
+            <div key={book.id} style={{border: "solid red 1px", padding: "10px"}} >
+              Book-{book.id}
+              <div>
+                {book.is_open &&
+                  <img src="https://thumbs.dreamstime.com/z/open-book-vector-icon-white-background-53193927.jpg"
+                      style={{width: "40px"}} />}
+                {!book.is_open &&
+                  <img src="https://image.shutterstock.com/image-vector/closed-book-bookmark-icon-vector-260nw-1438430336.jpg"
+                      style={{width: "40px"}} />}
+              </div>
+              <div>Price = {book.price}</div>
+              <button onClick={() => dispatch(book_slice.actions.open(book_index))} >Open</button>
+              <button onClick={() => dispatch(book_slice.actions.close(book_index))} >Close</button>
+              <button onClick={() => dispatch(book_slice.actions.increase_price({book_index: book_index, price: 100}))} >Increase Price</button>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => dispatch(book_slice.actions.add())} >Add</button>
+      </div>
+    </div>
+  );
+}
+
+export default MainFunc;
+```
+
+**File: src/state_reducers.jsx**
+
+```JSX
+import {createSlice } from '@reduxjs/toolkit';
+
+export const book_slice = createSlice({
+  name: 'book_slice',
+  initialState: {
+    books: [
+      {id: 1, is_open: true, price: 10},
+      {id: 2, is_open: false, price: 20},
+      {id: 3, is_open: true, price: 30},
+    ],
+    id_counter: 4
+  },
+  reducers: {
+    add: function (state) {
+      state.books.push({id: state.id_counter, is_open: false, price: 7})
+      state.id_counter += 1
+    },
+    open: function (state, {payload: book_index}) {
+      state.books[book_index].is_open = true
+    },
+    close: function (state, {payload: book_index}) {
+      state.books[book_index].is_open = false
+    },
+    increase_price: function (state, {payload: {book_index, price}}) {
+      state.books[book_index].price += price
+    }
+  }
+})
+
+export default book_slice.reducers
+```
+
+**File: src/index.jsx**
+
+```JSX
+import React from 'react';
+import {Provider} from 'react-redux'
+import ReactDOM from 'react-dom/client';
+import MainFunc from './common';
+
+import { configureStore } from '@reduxjs/toolkit';
+import {book_slice} from './state_reducers';
+
+export const store = configureStore({
+  reducer: {
+    book_slice: book_slice.reducer,
+  },
+});
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <Provider store={store}>
+      <MainFunc />
+    </Provider>
+  </React.StrictMode>
+);
+```
