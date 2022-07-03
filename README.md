@@ -1,4 +1,10 @@
-## Learning ReactJS by Examples
+# Learning ReactJS by Examples
+
+## Part1:
+
+Examples in Part1 doesn't require any installation. JSX code is transformed to JS using babel at runtime. Simply placing the `index.html` and `common.jsx` files in a directory (similar to directory in demo folders) and running a `python3 -m http.server` works well enough. This setup should not be used in production.
+
+This has some limitations : We cannot make use of third-party react components and libraries. They can only be installed with npm.
 
 ### 1). Example1
 
@@ -443,26 +449,62 @@ Note:
 
 -----------------------------------
 
-### 8). useDictState Hook
+### 8). State management and react hooks
 
-`const state = useDictState({key1: ..., key2: ...})`
+If non-const variables (i.e. variables whose value can change over time) are used in HTML content, they should be used with state managers, like `useState` hook, `useDictState` hook, redux store etc.
 
-All the variables with changing value, should be put inside `useDictState` as a key.
-`useDictState` will ensure when their value is changed, it's reflected correctly in HTML.
+In React, there are so many ways of managing state. Details can be found in [this section](#14-state-management-in-detail). Here we will see a brief summary.
 
-1). Incorrect:
+#### A). `React.useState` (Available with React by default)
+
+- Suitable for Atomic types. Example: integers, boolean and string.
+- Not suitable for complex types like list and dict. We must use Redux Store or React Reducer for them.
+- Suitable for complex types like list/dict **ONLY IF** we never edit them partially, but  replace them with a new value.
+
+How to use `React.useState`:
 
 ```JSX
-function MainFunc(props) {
-  var name = "Abc";
-  var age = 12;
-  var tasks = [{name: "Task1"}, {name: "Task2"}]
-  var tabs_in_header = ["About", "Contacts", "Projects"]
-  ...
-}
+// 10 is the initial value of variable `count`.
+const [count, setCount] = React.useState(10);
+
+// Using it's value. Which is 10.
+<h1>{count}</h1>
+
+// Change it's value to something else (100 in this case).
+setCount(100);
+
+// NOT ALLOWED.
+count = 100;
 ```
 
-2). Correct:
+Using complex type with `React.useState`:
+
+
+```JSX
+// This dictionary `{name: "A", ...}` is the initial value of variable `info`.
+const [info, setInfo] = React.useState({name: "A",
+                                        age: 40})
+
+// Using it's value.
+<div>Name = {info.name}, Age = {info.age}</div>
+
+// Updating it's value to some other dictionary:
+setInfo({name: "B", age: 55})
+
+// Updating it's value to some other dictionary:
+setInfo(new_info)
+
+// NOT ALLOWED
+info.name = "B"
+```
+
+#### B). useDictState hook (Custom implementation by React Starter Pack)
+
+- Suitable for any kind of data types inside a dictionary. Supports deeply nested dictionary.
+- `.get` or `.set` needs to be used for accessing dict keys / list index.
+
+Syntax: `const state = useDictState({key1: ..., key2: ...})`
+
 
 ```JSX
 function MainFunc(props) {
@@ -476,7 +518,9 @@ function MainFunc(props) {
 }
 ```
 
-Note: `tabs_in_header` is a fixed value. It's never changed. Hence we can decide to put it outside of `useDictState` as well. Though there is no harm in keeping it inside `useDictState`.
+Note: Value of `tabs_in_header` will remain fixed. It will never change. Hence we can decide to put it outside of `useDictState` as well. Though there is no harm in keeping it inside `useDictState`.
+
+Note: `useDictState` should be used only once in a component.
 
 Accessing and updating key-values in useDictState.
 
@@ -527,13 +571,18 @@ B). `state.complex.expression.set("key", some.complex.expression)`
 
 C). `state.complex.expression.set(3, some.complex.expression)`
 
+-------
+
+#### C). `Redux Store` and `React's Reducer Hook` are explained in this section.
+
 
 **File: common.jsx**
 
 ```JSX
 function MainFunc(props) {
   const state = useDictState({
-    counter: 1
+    counter: 1,
+    name: "A",
   })
   var increment = function() {
     state.set("counter", state.get("counter") + 1)
@@ -549,8 +598,28 @@ function MainFunc(props) {
 }
 ```
 
-Advance Shortcut : `state.set("counter", x => x+1)`
+Note: Advance Shortcut : `state.set("counter", x => x+1)`
 
+
+**Same example with `React.useState`**:
+
+```JSX
+function MainFunc(props) {
+  const [counter, setCounter] = React.useState(1)
+  const [name, setName] = React.useState("Default-Name")
+  var increment = function() {
+    setCounter(counter + 1)
+  }
+  return (
+    <div>
+      <div style={{fontSize: "20px"}} >Counter Value = {counter}</div>
+      <div>
+        <button onClick={increment} >Click to Increase Counter</button>
+      </div>
+    </div>
+  );
+}
+```
 
 **File: angularjs.html**
 
@@ -587,14 +656,32 @@ Advance Shortcut : `state.set("counter", x => x+1)`
 | `const state = useDictState({counter: 1})` | `$scope.counter = 1` |
 
 
+**`useDictState` vs `React.useState` Difference:**
+
+| useDictState              | React.useState    |
+| -------------------- | -------------------- |
+| `<p>Counter Value = {state.get("counter")}</p>` | `<p>Counter Value = {counter}</p>` |
+| `state.set("counter", state.get("counter") + 1)` | `setCounter(counter + 1)` |
+| `const state = useDictState({counter: 1})` | `const [counter, setCounter] = React.useState(1)` |
+
 [Example8 Demo](demos/example8)
 
 
 -----------------------------------
 
-### 9). useDictState hook and Input
+### 9). useDictState / React.useState hook and Input
 
-React Syntax: `<input value={state.get('name')} onChange={state.setter('name')} />`
+React Syntax with `useDictState`:
+
+```JSX
+<input value={state.get('name')} onChange={state.setter('name')} />
+```
+
+React Syntax with `React.useState`:
+
+```JSX
+<input value={name} onChange={(e) => setName(e.target.value)} />
+```
 
 Angular Syntax: `<input ng-model="name" />`
 
@@ -604,33 +691,69 @@ Note:
 
 2. `.setter` method returns a function, that will automatically update the value of key `name` whenever input's text is changed in browser.
 
+3. When using `setName`, we can get input box's text value from `e.target.value`. Note that `setter` does it automatically in case of `useDictState`.
+
 
 **File: common.jsx**
 
 ```JSX
-function MainFunc(props) {
+function MainFunc() {
   const state = useDictState({
     name: "Alan",
     city: "B"
   })
   return (
     <div style={{border: "solid red 1px"}} >
-        <div>My Name = {state.get('name')} </div>
-        <div>
-          <input value={state.get('name')} onChange={state.setter('name')} />
-        </div>
-        <div>My City = {state.get('city')}</div>
-        <div>
-          <select value={state.get('city')} onChange={state.setter('city')} >
-            <option>A</option>
-            <option>B</option>
-            <option>C</option>
-          </select>
-        </div>
+      <div>My Name = {state.get('name')} </div>
+      <div>
+        <input value={state.get('name')} onChange={state.setter('name')} />
+      </div>
+      <div>My City = {state.get('city')}</div>
+      <div>
+        <select value={state.get('city')} onChange={state.setter('city')} >
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+        </select>
+      </div>
     </div>
   );
 }
 ```
+
+**Same example with `React.useState`**:
+
+```JSX
+function MainFunc() {
+  const [name, setName] = React.useState("Alan")
+  const [city, setCity] = React.useState("B")
+  return (
+    <div style={{border: "solid red 1px"}} >
+      <div>My Name = {name} </div>
+      <div>
+        <input value={name} onChange={(e) => setName(e.target.value)} />
+      </div>
+      <div>My City = {city}</div>
+      <div>
+        <select value={city} onChange={(e) => setCity(e.target.value)} >
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+        </select>
+      </div>
+    </div>
+  );
+}
+```
+
+**`useDictState` vs `React.useState` Difference:**
+
+| useDictState              | React.useState    |
+| -------------------- | -------------------- |
+| `<p>My Name = {state.get("name")}</p>` | `<p>My Name = {name}</p>` |
+| `onChange={state.setter('name')}` | `onChange={(e) => setName(e.target.value)}` |
+| `onChange={state.setter('city')}` | `onChange={(e) => setCity(e.target.value)}` |
+
 
 **File: angularjs.html**
 
@@ -670,6 +793,8 @@ function MainFunc(props) {
 -----------------------------------
 
 ### 10). Complex and Nested useDictState hook
+
+Note: `React.useState` is not suitable for complex dictionary objects. We can use `useDictState` or `Redux Store` or `React Reducer` for complex state.
 
 **File: common.jsx**
 
@@ -768,16 +893,16 @@ function MainFunc(props) {
 
 -----------------------------------
 
-### 11). API call and useExecOnce hook
+### 11). API call and `React.useEffect` hook
 
-Note: `MainFunc` function is called everytime state is changed. If a code needs to be executed only once (example: API call), it should be kept inside `useExecOnce`
+Note: `MainFunc` function is called everytime state is changed. If a code needs to be executed only once (example: API call), it should be kept inside `React.useEffect` with second argument = `[]`
 
 Syntax:
 
 ```JSX
-useExecOnce(() => {
+React.useEffect(() => {
   // Any Code.. Example API call.
-})
+}, [])
 ```
 
 **File: common.jsx**
@@ -796,14 +921,14 @@ function MainFunc(props) {
   // example when button is clicked.
   console.log("Inside MainFunc " + state.get("counter"))
 
-  useExecOnce(() => {
+  React.useEffect(() => {
     // this console.log will be there exactly once.
-    console.log("Inside useExecOnce")
+    console.log("Inside React.useEffect")
     // This API takes 5 seconds to respond.
     api("/sleep_for_5_seconds_and_return_name", {}, function(d) {
       state.set('name', d.name)
     })
-  })
+  }, [])
 
   return (
     <div>
@@ -882,7 +1007,7 @@ function Window(props) {
   return (<div style={style_dict} >Window of {props.height}px height.</div>);
 }
 
-function Door(props) {
+function Door() {
   const style_dict = {
     display: "inline-block",
     width: "100px",
@@ -893,7 +1018,7 @@ function Door(props) {
   return (<div style={style_dict} >Door.</div>);
 }
 
-function Room1(props) {
+function Room1() {
   return (
     <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
       <h3>I am Room1</h3>
@@ -906,7 +1031,7 @@ function Room1(props) {
   )
 }
 
-function Room2(props) {
+function Room2() {
   return (
     <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
       <h3>I am Room2</h3>
@@ -921,10 +1046,10 @@ function Room2(props) {
   )
 }
 
-function Foodbox(props) {
+function Foodbox({name, quantity}) {
   return (
     <div style={{margin: "4px", backgroundColor: "#ddd"}} >
-      I am {props.name}
+      I am {name}. My quantity = {quantity}kg.
     </div>
   )
 }
@@ -938,13 +1063,13 @@ function Kitchen() {
         Food items:
       </div>
       <div>
-        {food_list.map(food_name => <Foodbox name={food_name} />)}
+        {food_list.map(food_name => <Foodbox name={food_name} quantity={2} />)}
       </div>
     </div>
   )
 }
 
-function MainFunc(props) {
+function MainFunc() {
   return (
     <div style={{border: "solid black 1px"}} >
       <Room1 />
@@ -965,6 +1090,7 @@ and how `name` is passed to `<Foodbox name={food_name} />`.
 
 Which is then accessed using `props.height` or `props.name` in those component implementation.
 
+2). In a component implementation, if inputs are declared like `function Foodbox({name, quantity}) {`, we can directly use the variable `name` and `quantity`.. because dictionary value coming from input is destructured into these 2 variable. [Learn more here](https://www.w3schools.com/react/react_es6_destructuring.asp).
 
 [Example12 Demo](demos/example12)
 
@@ -979,33 +1105,31 @@ Calling a function when value of a state variable is changed:
 Syntax: 
 
 ```JSX
-useEffectOnChange(() => {
+React.useEffect(() => {
   // Action to be taken when variables are changed.
 }, [changed_variables])
 ```
 
-In this example `state.get("age")` is the changed variable.
+In this example `age` is the changed variable.
 
 **File: common.jsx**
 
 ```JSX
 function MainFunc(props) {
-  const state = useDictState({
-    age: 20,
-    remaining_age: 80
-  })
+  const [age, setAge] = React.useState(20)
+  const [remaining_age, setRemainingAge] = React.useState(80)
 
-  useEffectOnChange(() => {
-    state.set("remaining_age", 100 - state.get("age"))
-  }, [state.get("age")])
+  React.useEffect(() => {
+    setRemainingAge(100 - age)
+  }, [age])
 
   return (
     <div style={{border: "solid red 1px"}} >
-        <div>Age = {state.get('age')} </div>
-        <div>Remaining Age = {state.get('remaining_age')} </div>
-        <div>
-          <input type="number" value={state.get('age')} onChange={state.setter('age')} />
-        </div>
+      <div>Age = {age} </div>
+      <div>Remaining Age = {remaining_age} </div>
+      <div>
+        <input type="number" value={age} onChange={e => setAge(e.target.value)} />
+      </div>
     </div>
   );
 }
@@ -1043,53 +1167,12 @@ function MainFunc(props) {
 
 In this example, when `age` is changed, we want to update the `remaining_age` variable automatically.
 
+Note: `React.useEffect` is same as what we used in Example11 for API call. In that example we passed `[]` second argument. If we pass `[]` as second argument then the `effect` will take place only once.
+
 [Example13 Demo](demos/example13)
 
 
-
-<!--
-
-
 -----------------------------------
-
-### template
-
-**File: common.jsx**
-
-```JSX
-function MainFunc(props) {
-  return (
-    <div></div>
-  );
-}
-```
-
-**File: angularjs.html**
-
-```HTML
-<!DOCTYPE html>
-<html>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-<body ng-app="myApp" ng-controller="myCtrl" >
-  <div>
-  </div>
-<script>
-  var app = angular.module('myApp', []);
-  app.controller('myCtrl', function($scope) {
-  });
-</script>
-</body>
-</html>
-```
-
-
-[Example8 Demo](demos/example8)
-
-
--->
-
------------------------------------
-
 
 
 ### Functions in JSX
@@ -1235,28 +1318,54 @@ function MainFunc(props) {
 }
 ```
 
-#### 4). Stringify variables to show inside HTML.
+#### 4). `JSON.stringify` variables to show inside HTML.
 
 By default an integer or string type of variable can be displayed in HTML using `{variable}`.
 
-To display other type of variables (example - boolean, or list/dict) inside HTML, use `{Stringify(variable)}`
+To display other type of variables (example - boolean, or list/dict) inside HTML, use `{JSON.stringify(variable)}`
 
 ```HTML
-<div>List = {Stringify(state.get("list"))}</div>
+<div>List = {JSON.stringify(list)}</div>
 ```
 
-### Advance Stuff
+Note: To display dict/list coming out of `useDictState`, we must add `.value()` like this : `<div>List = {JSON.stringify(variable.value())}</div>` 
 
-1). Router.
 
 ### Note
 
 1. In this tutorial, we are using [React Starter Pack](https://github.com/mohitmv/react_starter_pack/) library.
 
-2. In this tutorial, we are using inline babel transformer for simplicity. In real production apps, it's done offline, which require local setup/installation. `npm` setup is skipped from this tutorial.
+2. In this tutorial, we are using inline babel transformer for simplicity. In production apps, babel transformation is done offline. Which requires npm installation. `npm` installation is skipped from this tutorial.
 
 
 ### Try It
 
 [Try JSX code here](https://tinytrashbin.github.io/react_and_angularjs_short_notes/try_it/index.html).
+
+
+
+## Part2:
+
+Part-2 starts with local npm setup.
+
+Install node.js and npm. Clone [this repo](https://github.com/tinytrashbin/react_app) to start with. Run `npm install`. Figure out the details of node.js installation from external sources.
+
+
+### 14). State Management In Detail
+
+There are a lot of ways to manage state in React:
+
+A). useState: (Available with React): [Explained Above](#8-state-management-and-react-hooks)
+
+B). useDictState (Custom implementation by React Starter Pack): [Explained Above](#8-state-management-and-react-hooks).
+
+C). Global Store with Redux Toolkit : We will cover this.
+
+D). Global Store with Redux but without Toolkit : We will NOT cover this.
+
+E). Global store with react reducer and immer library : We might cover this. It's similar to Redux Toolkit.
+
+F). Global store with react reducer without immer library : We will NOT cover this.
+
+G). `useImmer` hook (Custom Implementation) : We will cover this.
 

@@ -1,4 +1,3 @@
-
 function MainFunc(props) {
   const state = useDictState({
     name: "Default-Name",
@@ -11,14 +10,14 @@ function MainFunc(props) {
   // example when button is clicked.
   console.log("Inside MainFunc " + state.get("counter"))
 
-  useExecOnce(() => {
+  React.useEffect(() => {
     // this console.log will be there exactly once.
-    console.log("Inside useExecOnce")
+    console.log("Inside React.useEffect")
     // This API takes 5 seconds to respond.
-    api("/sleep_for_5_seconds_and_return_name", {}, function(backend_output) {
-      state.set('name', backend_output.name)
+    api("/sleep_for_5_seconds_and_return_name", {}, function(d) {
+      state.set('name', d.name)
     })
-  })
+  }, [])
 
   return (
     <div>

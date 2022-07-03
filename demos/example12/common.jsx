@@ -10,7 +10,7 @@ function Window(props) {
   return (<div style={style_dict} >Window of {props.height}px height.</div>);
 }
 
-function Door(props) {
+function Door() {
   const style_dict = {
     display: "inline-block",
     width: "100px",
@@ -21,7 +21,7 @@ function Door(props) {
   return (<div style={style_dict} >Door.</div>);
 }
 
-function Room1(props) {
+function Room1() {
   return (
     <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
       <h3>I am Room1</h3>
@@ -34,7 +34,7 @@ function Room1(props) {
   )
 }
 
-function Room2(props) {
+function Room2() {
   return (
     <div style={{border: "solid blue 1px", margin: "15px", display: "inline-block"}} >
       <h3>I am Room2</h3>
@@ -49,10 +49,10 @@ function Room2(props) {
   )
 }
 
-function Foodbox(props) {
+function Foodbox({name, quantity}) {
   return (
     <div style={{margin: "4px", backgroundColor: "#ddd"}} >
-      I am {props.name}
+      I am {name}. My quantity = {quantity}kg.
     </div>
   )
 }
@@ -66,13 +66,13 @@ function Kitchen() {
         Food items:
       </div>
       <div>
-        {food_list.map(food_name => <Foodbox name={food_name} />)}
+        {food_list.map(food_name => <Foodbox name={food_name} quantity={2} />)}
       </div>
     </div>
   )
 }
 
-function MainFunc(props) {
+function MainFunc() {
   return (
     <div style={{border: "solid black 1px"}} >
       <Room1 />
