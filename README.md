@@ -1344,7 +1344,7 @@ Note: To display dict/list coming out of `useDictState`, we must add `.value()` 
 
 Part-2 starts with local npm setup.
 
-Install node.js and npm. Clone [this repo](https://github.com/tinytrashbin/react_app) to start with. Run `npm install`. Figure out the details of node.js installation from external sources.
+Install node.js and npm. Clone [this repo](https://github.com/tinytrashbin/react_app_with_redux_toolkit) to start with. Run `npm install`. Figure out the details of node.js installation from external sources.
 
 
 ### 14). State Management In Detail
@@ -1369,13 +1369,13 @@ G). `useImmer` hook (Custom Implementation) : We will cover this.
 
 #### C). Global Store with Redux Toolkit
 
-[This is a  basic example](https://github.com/tinytrashbin/react_app), demonstrating how redux toolkit can be used for state management.
+[This is a  basic example](https://github.com/tinytrashbin/react_app_with_redux_toolkit), demonstrating how redux toolkit can be used for state management.
 
-Note: In any react app, all the important code goes in `src` directory.
+Note: In general, in a react app, all the important code goes in `src` directory.
 
 In this app:
 
-- `src/state_reducers.js` contains state management logic of one file.
+- `src/state_reducers.js` contains state management logic.
 
 - `src/common.jsx` contains components.
 
@@ -1393,28 +1393,32 @@ function MainFunc(props) {
   const dispatch = useDispatch();
   return (
     <div className="top_box" >
-      <div >
-        <div>
-          {state.books.map((book, book_index) => (
-            <div key={book.id} style={{border: "solid red 1px", padding: "10px"}} >
-              Book-{book.id}
-              <div>
-                {book.is_open &&
-                  <img src="https://thumbs.dreamstime.com/z/open-book-vector-icon-white-background-53193927.jpg"
-                      style={{width: "40px"}} />}
-                {!book.is_open &&
-                  <img src="https://image.shutterstock.com/image-vector/closed-book-bookmark-icon-vector-260nw-1438430336.jpg"
-                      style={{width: "40px"}} />}
-              </div>
-              <div>Price = {book.price}</div>
-              <button onClick={() => dispatch(book_slice.actions.open(book_index))} >Open</button>
-              <button onClick={() => dispatch(book_slice.actions.close(book_index))} >Close</button>
-              <button onClick={() => dispatch(book_slice.actions.increase_price({book_index: book_index, price: 100}))} >Increase Price</button>
-            </div>
-          ))}
+      <div>
+      {state.books.map((book, book_index) => (
+        <div key={book.id} style={{border: "solid red 1px", padding: "10px"}} >
+          Book-{book.id}
+          <div>
+            {book.is_open &&
+              <img src="https://thumbs.dreamstime.com/z/open-book-vector-icon-white-background-53193927.jpg"
+                  style={{width: "40px"}} />}
+            {!book.is_open &&
+              <img src="https://image.shutterstock.com/image-vector/closed-book-bookmark-icon-vector-260nw-1438430336.jpg"
+                  style={{width: "40px"}} />}
+          </div>
+          <div>Price = {book.price}</div>
+          <button onClick={() => dispatch(book_slice.actions.open(
+                book_index))} >Open</button>
+          <button onClick={() => dispatch(book_slice.actions.close(
+                  book_index))} >Close</button>
+          <button onClick={() => dispatch(
+              book_slice.actions.increase_price({
+                book_index: book_index, price: 100}))} >
+            Increase Price
+          </button>
         </div>
-        <button onClick={() => dispatch(book_slice.actions.add())} >Add</button>
+      ))}
       </div>
+      <button onClick={() => dispatch(book_slice.actions.add())} >Add</button>
     </div>
   );
 }
