@@ -1365,6 +1365,9 @@ F). Global store with react reducer without immer library : We will NOT cover th
 
 G). `useImmer` hook (Custom Implementation) : We will cover this.
 
+
+Importance Order: A > G > C > B > E
+
 ------
 
 #### C). Global Store with Redux Toolkit
