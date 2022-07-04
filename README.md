@@ -1359,7 +1359,7 @@ C). Global Store with Redux Toolkit : We will cover this.
 
 D). Global Store with Redux but without Toolkit : We will NOT cover this.
 
-E). Global store with react reducer and immer library : We might cover this. It's similar to Redux Toolkit.
+E). Global store with react reducer and immer library : We will cover this. It's similar to Redux Toolkit.
 
 F). Global store with react reducer without immer library : We will NOT cover this.
 
@@ -1487,3 +1487,128 @@ root.render(
   </React.StrictMode>
 );
 ```
+
+-----
+
+#### E). Global store with react reducer and immer library
+
+It's same as Redux Toolkit after using the `"Redux Toolkit Glue"` library. No code change required except importing `"Redux Toolkit Glue"` library instead of `redux-toolkit` library.
+
+[Here is](https://github.com/tinytrashbin/redux_toolkit_glue) an example using `"Redux Toolkit Glue"`.
+
+-----
+
+#### G). `useImmer` hook (Custom Implementation) :
+
+[This is a basic example](https://github.com/tinytrashbin/react_examples/blob/master/src/example2.jsx), demonstrating how `useImmer` hook can be used for state management.
+
+Also See [Live demo (Example2)](https://tinytrashbin.github.io/react_examples/demos/#/example2)
+
+**File: src/example2.jsx**
+
+```JSX
+function Example2() {
+  const [state, updateState] = useImmer({
+    books: [
+      {id: 1, is_open: true, price: 100},
+      {id: 2, is_open: false, price: 200},
+      {id: 3, is_open: true, price: 300},
+    ],
+    id_counter: 4
+  })
+
+  const open = function(book_index) {
+    updateState(state => {
+      state.books[book_index].is_open = true
+    })
+  }
+
+  const close = function(book_index) {
+    updateState(state => {
+      state.books[book_index].is_open = false
+    })
+  }
+
+  const add = function() {
+    updateState(state => {
+      state.books.push({id: state.id_counter, is_open: false, price: 80})
+      state.id_counter += 1
+    })
+  }
+
+  const increase_price = function(book_index, price) {
+    updateState(state => {
+      state.books[book_index].price += price
+    })
+  }
+
+  return (
+    <div >
+      <Header/>
+      <h2>Example2</h2>
+      <div className="top_box" >
+        {state.books.map((book, book_index) => (
+          <div key={book.id} style={{border: "solid red 1px", padding: "10px"}} >
+            Book-{book.id}
+            <div>{book.is_open ? "Open" : "Close"} ; Price = {book.price}</div>
+            <button onClick={() => open(book_index)} >Open</button>
+            <button onClick={() => close(book_index)} >Close</button>
+            <button onClick={() => increase_price(book_index, 100)} >
+              Increase Price
+            </button>
+          </div>
+        ))}
+      </div>
+      <button onClick={add} >Add</button>
+    </div>
+  );
+}
+
+```
+
+Note: When using `useImmer` hook, we need to call `updateState` like this only for updating the state. We cannot update the state directly.
+
+-------
+
+### 15). React Router
+
+React Router is useful for connecting URLs with different components.
+
+For example, in this [Live demo](https://tinytrashbin.github.io/react_examples/demos/#/example2), we can see `Example1`, `Example2`, `Example3` shows up for different URL (on different tabs).
+
+[From here](https://github.com/tinytrashbin/react_examples/tree/master/src) we can see that `Example1`, `Example2` and `Example3` are 3 different components defined in 3 different files.
+
+Which are combined in [`common.jsx`](https://github.com/tinytrashbin/react_examples/blob/master/src/common.jsx)
+
+**File: src/common.jsx**
+
+```JSX
+import Example1 from './example1';
+import Example2 from './example2';
+import Example3 from './example3';
+import {Routes, Route, HashRouter} from "react-router-dom"
+
+function MainFunc() {
+  return (
+    <HashRouter>
+      <Routes>
+        <Route >
+          <Route path="/" element={<Example1 />} />
+          <Route path="/example1" element={<Example1 />} />
+          <Route path="/example2" element={<Example2 />} />
+          <Route path="/example3" element={<Example3 />} />
+          <Route path="*" element={<h1>Invalid</h1>} />
+        </Route>
+      </Routes>
+    </HashRouter>);
+}
+
+export default MainFunc;
+```
+
+- As per these route declaration, when URL ends with `"/example2"`, then `Example2` component will display. Similarly for `Example1` and `Example3`.
+
+- In real web applications, `Example1`, `Example2`, `Example3` are different page of website. For example: login page, signup page, profile page, admin page etc.
+
+-------
+
