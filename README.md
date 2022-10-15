@@ -679,6 +679,13 @@ React Syntax with `React.useState`:
 <input value={name} onChange={(e) => setName(e.target.value)} />
 ```
 
+```JSX
+const [isActive, setIsActive] = React.useState(false);
+
+<input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+<Checkbox checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
+```
+
 Angular Syntax: `<input ng-model="name" />`
 
 Note:
